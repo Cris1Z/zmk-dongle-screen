@@ -2,7 +2,6 @@
 #include <zephyr/logging/log.h>
 #include <zmk/hid.h>
 #if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
-#include <dt-bindings/zmk/hid_indicators.h>
 #include <zmk/hid_indicators.h>
 #endif
 #include <lvgl.h>
@@ -14,7 +13,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 static bool caps_lock_is_active(void)
 {
 #if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
-    return (zmk_hid_indicators_get_current_profile() & HID_INDICATOR_CAPS_LOCK) != 0;
+    return (zmk_hid_indicators_get_current_profile() &
+            (1 << (HID_USAGE_LED_CAPS_LOCK - HID_USAGE_LED_NUM_LOCK))) != 0;
 #else
     return false;
 #endif
