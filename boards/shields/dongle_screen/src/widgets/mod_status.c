@@ -1,20 +1,33 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zmk/hid.h>
+#if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
+#include <dt-bindings/zmk/hid_indicators.h>
+#include <zmk/hid_indicators.h>
+#endif
 #include <lvgl.h>
 #include "mod_status.h"
 #include <fonts.h> // <-- Wichtig für LV_FONT_DECLARE
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+static bool caps_lock_is_active(void)
+{
+#if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
+    return (zmk_hid_indicators_get_current_profile() & HID_INDICATOR_CAPS_LOCK) != 0;
+#else
+    return false;
+#endif
+}
+
 static void update_mod_status(struct zmk_widget_mod_status *widget)
 {
     uint8_t mods = zmk_hid_get_keyboard_report()->body.modifiers;
-    char text[32] = "";
+    char text[64] = "";
     int idx = 0;
 
     // Temporäre Puffer für Symbole
-    char *syms[4];
+    char *syms[5];
     int n = 0;
 
     if (mods & (MOD_LCTL | MOD_RCTL))
@@ -32,6 +45,9 @@ static void update_mod_status(struct zmk_widget_mod_status *widget)
 #else
         syms[n++] = "󰘳"; // U+F0633
 #endif
+
+    if (caps_lock_is_active())
+        syms[n++] = "CAPS";
 
     for (int i = 0; i < n; ++i)
     {
