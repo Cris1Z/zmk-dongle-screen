@@ -32,8 +32,13 @@ static void update_mod_status(struct zmk_widget_mod_status *widget)
 
     if (mods & (MOD_LCTL | MOD_RCTL))
         syms[n++] = "󰘴";
-    if (mods & (MOD_LSFT | MOD_RSFT))
-        syms[n++] = "󰘶"; // U+F0636
+
+    // Caps Lock oder Shift (Caps Lock hat Priorität)
+    if (caps_lock_is_active())
+        syms[n++] = "⇪"; // Caps Lock icon U+21EA
+    else if (mods & (MOD_LSFT | MOD_RSFT))
+        syms[n++] = "⇧"; // Shift icon U+21E7
+
     if (mods & (MOD_LALT | MOD_RALT))
         syms[n++] = "󰘵"; // U+F0635
     if (mods & (MOD_LGUI | MOD_RGUI))
@@ -45,9 +50,6 @@ static void update_mod_status(struct zmk_widget_mod_status *widget)
 #else
         syms[n++] = "󰘳"; // U+F0633
 #endif
-
-    if (caps_lock_is_active())
-        syms[n++] = "CAPS";
 
     for (int i = 0; i < n; ++i)
     {
