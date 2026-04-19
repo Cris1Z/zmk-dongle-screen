@@ -35,9 +35,9 @@ static void update_mod_status(struct zmk_widget_mod_status *widget)
 
     // Caps Lock oder Shift (Caps Lock hat Priorität)
     if (caps_lock_is_active())
-        syms[n++] = "⇪"; // Caps Lock icon U+21EA
+        syms[n++] = "󰘲"; // Caps Lock icon U+F0632
     else if (mods & (MOD_LSFT | MOD_RSFT))
-        syms[n++] = "⇧"; // Shift icon U+21E7
+        syms[n++] = "󰘶"; // Shift icon U+F0636
 
     if (mods & (MOD_LALT | MOD_RALT))
         syms[n++] = "󰘵"; // U+F0635
